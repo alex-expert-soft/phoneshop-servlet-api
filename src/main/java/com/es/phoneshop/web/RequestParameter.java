@@ -11,4 +11,6 @@ public class RequestParameter {
     public static final String SORT = "sort";
     public static final String ORDER = "order";
     public static final String QUANTITY = "quantity";
+    public static final String PRODUCT_ID = "productId";
+    public static final String ERRORS = "errors";
 }

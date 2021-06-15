@@ -1,5 +1,6 @@
 package com.es.phoneshop.dao;
 
+import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.sortenum.SortField;
 import com.es.phoneshop.model.sortenum.SortOrder;
@@ -39,9 +40,9 @@ public class ArrayListProductDao implements ProductDao {
     private long countWordsAmount(String searchQuery, Product product) {
         List<String> wordsList = new ArrayList<>();
         if (searchQuery != null && !searchQuery.isEmpty()) {
-            wordsList = Arrays.asList(searchQuery.split(" "));
+            wordsList = Arrays.asList(searchQuery.toUpperCase().split(" "));
         }
-        String description = product.getDescription();
+        String description = product.getDescription().toUpperCase();
         return wordsList.stream()
                 .filter(description::contains)
                 .count();
@@ -64,13 +65,14 @@ public class ArrayListProductDao implements ProductDao {
 
 
     @Override
-    public Optional<Product> getProduct(@NonNull final Long id) {
+    public Product getProduct(@NonNull final Long id) {
         Lock readLock = rwLock.readLock();
         readLock.lock();
         try {
             return products.stream()
                     .filter(product -> product.getId().equals(id))
-                    .findAny();
+                    .findAny()
+                    .orElseThrow(() -> new ProductNotFoundException(id));
         } finally {
             readLock.unlock();
         }

@@ -36,16 +36,14 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String productInfo;
         Product product = null;
-        Long id;
+        Long productId;
         RecentView recentView = recentViewService.getRecentView(request);
-        productInfo = request.getPathInfo().substring(1);
+        String productInfo = request.getPathInfo().substring(1);
 
         try {
-            id = Long.valueOf(productInfo);
-            product = productDao.getProduct(id)
-                    .orElseThrow(() -> new ProductNotFoundException(id));
+            productId = Long.valueOf(productInfo);
+            product = productDao.getProduct(productId);
         } catch (NumberFormatException ex) {
             request.setAttribute(RequestParameter.ERROR, "Number format exception");
         } catch (ProductNotFoundException ex) {
@@ -56,7 +54,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         recentViewService.add(recentView, product);
         request.setAttribute(RequestParameter.PRODUCT, product);
         request.setAttribute(RequestParameter.RECENT_VIEWS, recentView.getRecentlyViewed());
-        request.setAttribute(RequestParameter.CART, cartService.getCart(request));
+        request.setAttribute(RequestParameter.CART, cartService.getCart(request.getSession()));
         request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(request, response);
 
     }
@@ -78,11 +76,11 @@ public class ProductDetailsPageServlet extends HttpServlet {
             return;
         }
 
-        Cart cart = cartService.getCart(request);
+        Cart cart = cartService.getCart(request.getSession());
         try {
             cartService.add(cart, productId, quantity);
-        } catch (OutOfStockException e) {
-            request.setAttribute(RequestParameter.ERROR, "Out of stock, available " + e.getStockAvailable());
+        } catch (OutOfStockException ex) {
+            request.setAttribute(RequestParameter.ERROR, "Out of stock, available " + ex.getStockAvailable());
             doGet(request, response);
             return;
         }

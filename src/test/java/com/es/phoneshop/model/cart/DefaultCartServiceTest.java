@@ -53,7 +53,7 @@ public class DefaultCartServiceTest {
     @SneakyThrows
     @Test
     public void addProductToCartIncorrectQuantity() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(OutOfStockException.class,
                 () -> cartService.add(new Cart(), 1L, 0));
     }
 

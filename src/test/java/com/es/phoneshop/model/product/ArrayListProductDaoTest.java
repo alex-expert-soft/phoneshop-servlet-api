@@ -2,6 +2,7 @@ package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.dao.ArrayListProductDao;
 import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.sortenum.SortField;
 import com.es.phoneshop.model.sortenum.SortOrder;
 import org.junit.Before;
@@ -10,8 +11,8 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.util.Currency;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ArrayListProductDaoTest {
     private ProductDao productDao;
@@ -51,7 +52,7 @@ public class ArrayListProductDaoTest {
         productDao.save(product);
 
         final long id = product.getId();
-        assertTrue(productDao.getProduct(id).isPresent());
+        assertEquals(productDao.getProduct(id), product);
     }
 
     @Test
@@ -60,10 +61,11 @@ public class ArrayListProductDaoTest {
         Product product = new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
         productDao.save(product);
         final long id = product.getId();
-        assertTrue(productDao.getProduct(id).isPresent());
+        assertEquals(productDao.getProduct(id), product);
 
         productDao.delete(id);
-        assertFalse(productDao.getProduct(id).isPresent());
+        assertThrows(ProductNotFoundException.class,
+                ()->productDao.getProduct(id));
     }
 
     @Test
@@ -87,7 +89,7 @@ public class ArrayListProductDaoTest {
         productDao.save(product);
         final long id = product.getId();
 
-        assertTrue(productDao.getProduct(id).isPresent());
+        assertEquals(productDao.getProduct(id), product);
         assertFalse(productDao.findProducts("siemens", SortField.DESCRIPTION, SortOrder.ASC).contains(product));
     }
 }
