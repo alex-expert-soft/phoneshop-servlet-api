@@ -78,10 +78,11 @@ public class DefaultCartService implements CartService {
     }
 
     @Override
-    public void delete(@NonNull final Cart cart, @NonNull final Long productId) {
+    public synchronized void delete(@NonNull final Cart cart, @NonNull final Long productId) {
         cart.getItems().removeIf(item ->
                 productId.equals(item.getProduct().getId())
         );
+        recalculateCart(cart);
     }
 
     private void recalculateCart(@NonNull final Cart cart) {
