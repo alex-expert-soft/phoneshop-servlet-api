@@ -2,10 +2,10 @@ package com.es.phoneshop.model.recentviews;
 
 import com.es.phoneshop.model.product.Product;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 public interface RecentViewService {
-    RecentView getRecentView(HttpServletRequest request);
+    RecentView getRecentView(HttpSession session);
 
     void add(RecentView recentView, Product product);
 }

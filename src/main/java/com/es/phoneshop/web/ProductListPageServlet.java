@@ -31,7 +31,7 @@ public class ProductListPageServlet extends HttpServlet {
         String searchQuery = request.getParameter(RequestParameter.QUERY);
         SortField sortField = SortField.valueOf(request.getParameter(RequestParameter.SORT));
         SortOrder sortOrder = SortOrder.valueOf(request.getParameter(RequestParameter.ORDER));
-        RecentView recentView = recentViewService.getRecentView(request);
+        RecentView recentView = recentViewService.getRecentView(request.getSession());
 
         request.setAttribute(RequestParameter.RECENT_VIEWS, recentView.getRecentlyViewed());
         request.setAttribute(RequestParameter.PRODUCTS, productDao.findProducts(searchQuery, sortField, sortOrder));

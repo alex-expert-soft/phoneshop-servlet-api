@@ -38,7 +38,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Product product = null;
         Long productId;
-        RecentView recentView = recentViewService.getRecentView(request);
+        RecentView recentView = recentViewService.getRecentView(request.getSession());
         String productInfo = request.getPathInfo().substring(1);
 
         try {

@@ -3,7 +3,7 @@ package com.es.phoneshop.model.recentviews;
 import com.es.phoneshop.model.product.Product;
 import lombok.NonNull;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Collections;
 
 public class DefaultRecentViewService implements RecentViewService {
@@ -27,10 +27,10 @@ public class DefaultRecentViewService implements RecentViewService {
     }
 
     @Override
-    public RecentView getRecentView(@NonNull final HttpServletRequest request) {
-        RecentView recentView = (RecentView) request.getSession().getAttribute(RECENT_VIEW_SESSION_ATTRIBUTE);
+    public RecentView getRecentView(@NonNull final HttpSession session) {
+        RecentView recentView = (RecentView) session.getAttribute(RECENT_VIEW_SESSION_ATTRIBUTE);
         if (recentView == null) {
-            request.getSession().setAttribute(RECENT_VIEW_SESSION_ATTRIBUTE, recentView = new RecentView());
+            session.setAttribute(RECENT_VIEW_SESSION_ATTRIBUTE, recentView = new RecentView());
         }
         return recentView;
     }
