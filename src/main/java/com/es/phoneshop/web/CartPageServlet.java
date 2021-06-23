@@ -6,12 +6,14 @@ import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
+import com.es.phoneshop.model.recentviews.DefaultRecentlyViewedService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -21,19 +23,23 @@ import java.util.Map;
 
 public class CartPageServlet extends HttpServlet {
     private CartService cartService;
+    private DefaultRecentlyViewedService recentViewService;
     private ProductDao productDao;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        recentViewService = DefaultRecentlyViewedService.getInstance();
         cartService = DefaultCartService.getInstance();
         productDao = ArrayListProductDao.getInstance();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        setAttributes(request);
-        request.getRequestDispatcher("/WEB-INF/pages/cart.jsp").forward(request,response);
+        HttpSession session = request.getSession();
+        request.setAttribute(RequestParameter.CART, cartService.getCart(session));
+        request.setAttribute(RequestParameter.RECENTLY_VIEWED, recentViewService.getRecentlyViewed(session));
+        request.getRequestDispatcher("/WEB-INF/pages/cart.jsp").forward(request, response);
     }
 
     @Override
@@ -43,21 +49,21 @@ public class CartPageServlet extends HttpServlet {
 
         Map<Long, String> errors = new HashMap<>();
         for (int i = 0; i < productIds.length; i++) {
-            Long productId = Long.valueOf(productIds[i]);
-
-            int quantity;
             try {
-                quantity = getQuantity(quantities[i], request);
+                final int quantity = getParsedQuantity(quantities[i], request.getLocale());
                 final Cart cart = cartService.getCart(request.getSession());
+                final Long productId = Long.valueOf(productIds[i]);
                 cartService.update(cart, productId, quantity);
-            } catch (ParseException | OutOfStockException ex) {
-                handleError(errors, productId, ex);
+            } catch (ParseException | IllegalArgumentException ex) {
+                errors.put(Long.valueOf(productIds[i]), "Incorrect input");
+            } catch (OutOfStockException ex) {
+                errors.put(Long.valueOf(productIds[i]), "Out of stock");
             }
         }
 
 
         if (errors.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "cart?message=Cart updated successfully");
+            response.sendRedirect(request.getContextPath() + "/cart?message=Cart updated successfully");
         } else {
             request.setAttribute(RequestParameter.ERRORS, errors);
             doGet(request, response);
@@ -65,29 +71,12 @@ public class CartPageServlet extends HttpServlet {
 
     }
 
-    private void handleError(Map<Long, String> errors, Long productId, Exception e) {
-        if (e.getClass().equals(ParseException.class)) {
-            errors.put(productId, "Not a number");
+    private int getParsedQuantity(String quantity, Locale locale) throws ParseException {
+        if (quantity.matches("\\d+")) {
+            NumberFormat numberFormat = NumberFormat.getInstance(locale);
+            return numberFormat.parse(quantity).intValue();
         } else {
-            if (((OutOfStockException) e).getStockAvailable() <= 0) {
-                errors.put(productId, "Can't be negative or zero");
-            } else {
-                errors.put(productId, "Out of stock, max available " + ((OutOfStockException) e).getStockAvailable());
-            }
+            throw new ParseException(quantity, 0);
         }
     }
-
-    private void setAttributes(HttpServletRequest request) {
-        request.setAttribute(RequestParameter.CART, cartService.getCart(request.getSession()));
-    }
-
-    private int getQuantity(String quantityString, HttpServletRequest request) throws ParseException {
-        NumberFormat numberFormat = getNumberFormat(request.getLocale());
-        return numberFormat.parse(quantityString).intValue();
-    }
-
-    protected NumberFormat getNumberFormat(Locale locale) {
-        return NumberFormat.getInstance(locale);
-    }
-
 }
