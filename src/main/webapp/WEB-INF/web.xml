@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1"
-         metadata-complete="true" >
+         metadata-complete="true">
     <display-name>Phoneshop servlet api training</display-name>
 
     <context-param>
@@ -14,6 +14,16 @@
     <listener>
         <listener-class>com.es.phoneshop.web.DemoDataServletContextListener</listener-class>
     </listener>
+
+    <filter>
+        <filter-name>dosFilter</filter-name>
+        <filter-class>com.es.phoneshop.web.DosFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>dosFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <servlet>
         <servlet-name>productList</servlet-name>
@@ -85,10 +95,36 @@
         <servlet-class>com.es.phoneshop.web.MiniCartServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>checkout</servlet-name>
+        <servlet-class>com.es.phoneshop.web.CheckoutPageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>checkout</servlet-name>
+        <url-pattern>/checkout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>orderOverview</servlet-name>
+        <servlet-class>com.es.phoneshop.web.OrderOverviewPageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>orderOverview</servlet-name>
+        <url-pattern>/order/overview/*</url-pattern>
+    </servlet-mapping>
+
     <error-page>
-        <error-code>404</error-code>
+        <exception-type>com.es.phoneshop.exception.ProductNotFoundException</exception-type>
         <location>/WEB-INF/pages/errorProductNotFound.jsp</location>
     </error-page>
+
+    <error-page>
+        <exception-type>com.es.phoneshop.exception.OrderNotFoundException</exception-type>
+        <location>/WEB-INF/pages/errorOrderNotFound.jsp</location>
+    </error-page>
+
     <error-page>
         <error-code>500</error-code>
         <location>/WEB-INF/pages/errorServer.jsp</location>
