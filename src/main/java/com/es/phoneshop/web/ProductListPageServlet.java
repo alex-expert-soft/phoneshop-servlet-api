@@ -2,11 +2,8 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.dao.ArrayListProductDao;
 import com.es.phoneshop.dao.ProductDao;
-import com.es.phoneshop.model.recentviews.DefaultRecentViewService;
-import com.es.phoneshop.model.recentviews.RecentView;
-import com.es.phoneshop.model.recentviews.RecentViewService;
-import com.es.phoneshop.model.sortenum.SortField;
-import com.es.phoneshop.model.sortenum.SortOrder;
+import com.es.phoneshop.model.recentviews.DefaultRecentlyViewedService;
+import com.es.phoneshop.model.recentviews.RecentlyViewedService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -14,27 +11,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
 public class ProductListPageServlet extends HttpServlet {
     private ProductDao productDao;
-    private RecentViewService recentViewService;
+    private RecentlyViewedService recentlyViewedService;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         productDao = ArrayListProductDao.getInstance();
-        recentViewService = DefaultRecentViewService.getInstance();
+        recentlyViewedService = DefaultRecentlyViewedService.getInstance();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String searchQuery = request.getParameter(RequestParameter.QUERY);
-        SortField sortField = SortField.valueOf(request.getParameter(RequestParameter.SORT));
-        SortOrder sortOrder = SortOrder.valueOf(request.getParameter(RequestParameter.ORDER));
-        RecentView recentView = recentViewService.getRecentView(request.getSession());
-
-        request.setAttribute(RequestParameter.RECENT_VIEWS, recentView.getRecentlyViewed());
-        request.setAttribute(RequestParameter.PRODUCTS, productDao.findProducts(searchQuery, sortField, sortOrder));
+        String sortParam = Optional.ofNullable(request.getParameter(RequestParameter.SORT)).orElse(" ");
+        String orderParam = Optional.ofNullable(request.getParameter(RequestParameter.ORDER)).orElse(" ");
+        String searchParam = Optional.ofNullable(request.getParameter(RequestParameter.QUERY)).orElse(" ");
+        request.setAttribute(RequestParameter.PRODUCTS, productDao.findProducts(searchParam, sortParam, orderParam));
+        request.setAttribute(RequestParameter.RECENTLY_VIEWED, recentlyViewedService.getRecentlyViewed(request.getSession()));
         request.getRequestDispatcher("/WEB-INF/pages/productList.jsp").forward(request, response);
     }
 
