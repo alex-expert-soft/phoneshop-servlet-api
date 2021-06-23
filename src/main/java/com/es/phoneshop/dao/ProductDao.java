@@ -1,8 +1,6 @@
 package com.es.phoneshop.dao;
 
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.sortenum.SortField;
-import com.es.phoneshop.model.sortenum.SortOrder;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -10,7 +8,7 @@ import java.util.List;
 public interface ProductDao {
     Product getProduct(Long id);
 
-    List<Product> findProducts(String searchQuery, SortField sortField, SortOrder sortOrder);
+    List<Product> findProducts(String searchQuery, String sortField, String sortOrder);
 
     void save(Product product);
 
