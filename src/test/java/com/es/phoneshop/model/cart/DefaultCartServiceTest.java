@@ -4,6 +4,7 @@ import com.es.phoneshop.dao.ArrayListProductDao;
 import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.exception.ProductNotFoundException;
+import com.es.phoneshop.model.cart.entity.Cart;
 import com.es.phoneshop.model.product.Product;
 import lombok.SneakyThrows;
 import org.junit.Before;
