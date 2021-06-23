@@ -38,6 +38,17 @@ public class DefaultCartServiceTest {
                 .anyMatch(item -> item.getProduct().getId().equals(product.getId())));
     }
 
+    @SneakyThrows
+    @Test
+    public void addProductTestEx() {
+        final Currency usd = Currency.getInstance("USD");
+        final Product product = new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
+        product.setId(1L);
+        productDao.save(product);
+        final Cart cart = new Cart();
+        cartService.add(cart, (long) -1, 10);
+    }
+
     @Test
     public void addProductToCartNullCart() {
         assertThrows(NullPointerException.class,

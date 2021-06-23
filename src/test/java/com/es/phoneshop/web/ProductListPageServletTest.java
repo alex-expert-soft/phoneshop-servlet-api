@@ -1,7 +1,6 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.recentviews.RecentView;
-import com.es.phoneshop.model.recentviews.RecentViewService;
+import com.es.phoneshop.model.recentviews.RecentlyViewedService;
 import com.es.phoneshop.model.sortenum.SortField;
 import com.es.phoneshop.model.sortenum.SortOrder;
 import lombok.SneakyThrows;
@@ -18,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
@@ -34,7 +34,7 @@ public class ProductListPageServletTest {
     @Mock
     private ServletConfig config;
     @Mock
-    private RecentViewService recentViewService;
+    private RecentlyViewedService recentlyViewedService;
     @Mock
     private HttpSession session;
 
@@ -46,7 +46,7 @@ public class ProductListPageServletTest {
         servlet.init(config);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
         when(request.getSession()).thenReturn(session);
-        when(recentViewService.getRecentView(request.getSession())).thenReturn(new RecentView());
+        when(recentlyViewedService.getRecentlyViewed(request.getSession())).thenReturn(new ArrayList<>());
         when(request.getParameter(RequestParameter.QUERY)).thenReturn("Siemens");
         when(request.getParameter(RequestParameter.SORT)).thenReturn(String.valueOf(SortField.DESCRIPTION));
         when(request.getParameter(RequestParameter.ORDER)).thenReturn(String.valueOf(SortOrder.ASC));
