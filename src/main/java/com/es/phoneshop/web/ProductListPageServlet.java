@@ -1,7 +1,7 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.dao.ArrayListProductDao;
-import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.model.recentviews.DefaultRecentlyViewedService;
 import com.es.phoneshop.model.recentviews.RecentlyViewedService;
 

@@ -1,6 +1,6 @@
 package com.es.phoneshop.model.recentviews;
 
-import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.entity.Product;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;

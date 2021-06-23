@@ -1,4 +1,4 @@
-package com.es.phoneshop.model.cart;
+package com.es.phoneshop.model.cart.entity;
 
 import lombok.Getter;
 import lombok.Setter;

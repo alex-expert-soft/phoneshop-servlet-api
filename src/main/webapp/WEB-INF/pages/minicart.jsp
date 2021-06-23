@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
-<jsp:useBean id="cart" type="com.es.phoneshop.model.cart.Cart" scope="request"/>
+<jsp:useBean id="cart" type="com.es.phoneshop.model.cart.entity.Cart" scope="request"/>
 
 <c:if test="${not empty cart.items}">
     <a href="${pageContext.servletContext.contextPath}/cart">

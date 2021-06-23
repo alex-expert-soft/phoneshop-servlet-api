@@ -1,11 +1,11 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.dao.ArrayListProductDao;
-import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.exception.OutOfStockException;
-import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.CartService;
-import com.es.phoneshop.model.cart.DefaultCartService;
+import com.es.phoneshop.model.cart.entity.Cart;
+import com.es.phoneshop.model.cart.service.CartService;
+import com.es.phoneshop.model.cart.service.DefaultCartService;
 import com.es.phoneshop.model.recentviews.DefaultRecentlyViewedService;
 
 import javax.servlet.ServletConfig;

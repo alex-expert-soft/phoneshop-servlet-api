@@ -1,8 +1,8 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.recentviews.RecentlyViewedService;
-import com.es.phoneshop.model.sortenum.SortField;
-import com.es.phoneshop.model.sortenum.SortOrder;
+import com.es.phoneshop.model.product.entity.SortField;
+import com.es.phoneshop.model.product.entity.SortOrder;
 import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;

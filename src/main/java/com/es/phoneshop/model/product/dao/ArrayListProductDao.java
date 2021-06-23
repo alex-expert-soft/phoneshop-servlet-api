@@ -1,9 +1,9 @@
-package com.es.phoneshop.dao;
+package com.es.phoneshop.model.product.dao;
 
 import com.es.phoneshop.exception.ProductNotFoundException;
-import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.sortenum.SortField;
-import com.es.phoneshop.model.sortenum.SortOrder;
+import com.es.phoneshop.model.product.entity.Product;
+import com.es.phoneshop.model.product.entity.SortField;
+import com.es.phoneshop.model.product.entity.SortOrder;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
