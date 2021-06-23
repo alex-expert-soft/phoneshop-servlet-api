@@ -1,7 +1,6 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.exception.OutOfStockException;
-import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
 
@@ -14,6 +13,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
+import java.util.Optional;
 
 public class AddCartItemServlet extends HttpServlet {
     private CartService cartService;
@@ -25,35 +25,49 @@ public class AddCartItemServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        String productInfo = request.getPathInfo().substring(1);
-        Long productId;
-        String[] quantities = request.getParameterValues(RequestParameter.QUANTITY);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String quantityParam = Optional.ofNullable(request.getParameter(RequestParameter.QUANTITY))
+                .orElse(" ");
+        String productIdParam = Optional.ofNullable(request.getParameter(RequestParameter.PRODUCT_ID))
+                .orElse(" ");
+        String redirectPath = Optional.ofNullable(request.getParameter(RequestParameter.REDIRECT))
+                .orElse(" ");
+
+        if (redirectPath.equals(RequestParameter.PDP)) {
+            redirectPath = RequestParameter.PDP_PAGE + Long.valueOf(productIdParam);
+        } else if (redirectPath.equals(RequestParameter.PLP)) {
+            redirectPath = RequestParameter.PLP_PAGE;
+        }
+
+        StringBuilder path = new StringBuilder(request.getContextPath())
+                .append(redirectPath)
+                .append("?" + RequestParameter.PRODUCT_ID + "=").append(productIdParam)
+                .append("&" + RequestParameter.QUANTITY + "=").append(quantityParam);
 
         try {
-            productId = Long.valueOf(productInfo);
-            int quantity = getQuantity(quantities[productId.intValue()], request);
-            Cart cart = cartService.getCart(request.getSession());
-            cartService.add(cart, productId, quantity);
-        } catch (NumberFormatException | ParseException ex) {
-            request.setAttribute(RequestParameter.ERROR, "Number format exception");
-            doGet(request, response);
-            return;
+            final int quantity = getParsedQuantity(quantityParam, request.getLocale());
+            final Long productId = Long.valueOf(productIdParam);
+            cartService.add(cartService.getCart(request.getSession()), productId, quantity);
         } catch (OutOfStockException ex) {
-            request.setAttribute(RequestParameter.ERROR, "Out of stock, available " + ex.getStockAvailable());
-            doGet(request, response);
+            path.append("&" + RequestParameter.ERROR + "=Out of stock");
+            response.sendRedirect(path.toString());
+            return;
+        } catch (ParseException | IllegalArgumentException ex) {
+            path.append("&" + RequestParameter.ERROR + "=Incorrect input");
+            response.sendRedirect(path.toString());
             return;
         }
 
-        response.sendRedirect(request.getContextPath() + "/products?message=Cart item added successfully");
+        path.append("&" + RequestParameter.MESSAGE + "=Added to cart successfully");
+        response.sendRedirect(path.toString());
     }
 
-    private int getQuantity(String quantityString, HttpServletRequest request) throws ParseException {
-        NumberFormat numberFormat = getNumberFormat(request.getLocale());
-        return numberFormat.parse(quantityString).intValue();
-    }
-
-    protected NumberFormat getNumberFormat(Locale locale) {
-        return NumberFormat.getInstance(locale);
+    private int getParsedQuantity(String quantity, Locale locale) throws ParseException {
+        if (quantity.matches("\\d+")) {
+            NumberFormat numberFormat = NumberFormat.getInstance(locale);
+            return numberFormat.parse(quantity).intValue();
+        } else {
+            throw new ParseException(quantity, 0);
+        }
     }
 }
