@@ -1,9 +1,11 @@
-package com.es.phoneshop.model.cart;
+package com.es.phoneshop.model.cart.service;
 
-import com.es.phoneshop.dao.ArrayListProductDao;
-import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.exception.OutOfStockException;
-import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.cart.entity.Cart;
+import com.es.phoneshop.model.cart.entity.CartItem;
+import com.es.phoneshop.model.product.entity.Product;
 import lombok.NonNull;
 
 import javax.servlet.http.HttpSession;
@@ -14,7 +16,7 @@ public class DefaultCartService implements CartService {
     private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
 
     private ProductDao productDao;
-    public static volatile DefaultCartService instance;
+    private static volatile DefaultCartService instance;
 
     private DefaultCartService() {
         productDao = ArrayListProductDao.getInstance();
@@ -83,6 +85,12 @@ public class DefaultCartService implements CartService {
         cart.getItems().removeIf(item ->
                 productId.equals(item.getProduct().getId())
         );
+        recalculateCart(cart);
+    }
+
+    @Override
+    public void clearCart(@NonNull final Cart cart) {
+        cart.getItems().clear();
         recalculateCart(cart);
     }
 
