@@ -48,19 +48,20 @@ public class ArrayListProductDao implements ProductDao {
                 .count();
     }
 
-    private Comparator<Product> getComparator(String searchQuery, SortField sortField, SortOrder sortOrder) {
+    private Comparator<Product> getComparator(String searchQuery, String sortField, String sortOrder) {
         Comparator<Product> comparator;
-        if (sortField == SortField.DESCRIPTION) {
+        if (SortField.DESCRIPTION.equals(sortField)) {
             comparator = Comparator.comparing(Product::getDescription);
-        } else if (sortField == SortField.PRICE) {
+        } else if (SortField.PRICE.equals(sortField)) {
             comparator = Comparator.comparing(Product::getPrice);
         } else {
             comparator = Comparator.comparing(product -> countWordsAmount(searchQuery, product), Comparator.reverseOrder());
         }
-        if (sortOrder == SortOrder.DESC) {
-            comparator = comparator.reversed();
+        if (SortOrder.DESC.equals(sortOrder)) {
+            return comparator.reversed();
+        } else {
+            return comparator;
         }
-        return comparator;
     }
 
 
@@ -80,8 +81,8 @@ public class ArrayListProductDao implements ProductDao {
 
     @Override
     public List<Product> findProducts(@NonNull final String searchQuery,
-                                      @NonNull final SortField sortField,
-                                      @NonNull final SortOrder sortOrder) {
+                                      @NonNull final String sortField,
+                                      @NonNull final String sortOrder) {
         Lock readLock = rwLock.readLock();
         readLock.lock();
         try {
