@@ -7,6 +7,7 @@ import com.es.phoneshop.model.product.Product;
 import lombok.NonNull;
 
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public class DefaultCartService implements CartService {
@@ -89,14 +90,19 @@ public class DefaultCartService implements CartService {
         cart.setTotalQuantity(cart.getItems().stream()
                 .map(CartItem::getQuantity)
                 .mapToInt(Integer::intValue).sum());
+
+        cart.setTotalCost(cart.getItems().stream()
+                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO));
     }
 
-    private Optional<CartItem> findCartItemOptional(@NonNull final Cart cart, @NonNull final Long productId, final int quantity) throws OutOfStockException {
+    private Optional<CartItem> findCartItemOptional(@NonNull final Cart cart, @NonNull final Long productId, final int quantity) {
         if (quantity <= 0) {
-            throw new OutOfStockException(null, quantity, 0);
+            throw new IllegalArgumentException("Incorrect quantity");
         }
-        if (productId < 1) {
-            throw new IllegalArgumentException("Incorrect quantity of products");
+        if (productId < 0) {
+            throw new IllegalArgumentException("Incorrect product id");
         }
 
         final Product product = productDao.getProduct(productId);
