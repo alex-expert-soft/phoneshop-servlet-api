@@ -21,7 +21,7 @@ public class DosProtectionServiceImpl implements DosProtectionService {
         return instance;
     }
 
-    private static final long THRESHOLD = 10;
+    private static final long THRESHOLD = 600;
 
     private final Map<String, Long> countMap = new ConcurrentHashMap<>();
 
