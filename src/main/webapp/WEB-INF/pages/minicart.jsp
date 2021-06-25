@@ -5,11 +5,11 @@
 
 <jsp:useBean id="cart" type="com.es.phoneshop.model.cart.entity.Cart" scope="request"/>
 
-<c:if test="${not empty cart.items}">
-    <a href="${pageContext.servletContext.contextPath}/cart">
-        Cart: ${cart.totalQuantity} items ,
-        <fmt:formatNumber value="${cart.totalCost}" type="currency"
-                          currencySymbol="${cart.currency.symbol}"/>
+<a href="${pageContext.servletContext.contextPath}/cart">
+    Cart: ${cart.totalQuantity} items
+    <c:if test="${not empty cart.items}">
+        ,<fmt:formatNumber value="${cart.totalCost}" type="currency"
+                           currencySymbol="${cart.currency.symbol}"/>
         cost
-    </a>
-</c:if>
+    </c:if>
+</a>
