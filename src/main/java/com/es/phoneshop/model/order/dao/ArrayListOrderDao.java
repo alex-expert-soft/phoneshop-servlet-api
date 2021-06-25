@@ -15,12 +15,11 @@ public class ArrayListOrderDao implements OrderDao {
     private List<Order> orders;
     private long orderId;
 
-    private static ArrayListOrderDao instance;
-    private ReadWriteLock rwLock;
+    private static volatile ArrayListOrderDao instance;
+    private static final ReadWriteLock rwLock = new ReentrantReadWriteLock();
 
     private ArrayListOrderDao() {
         this.orders = new ArrayList<>();
-        this.rwLock = new ReentrantReadWriteLock();
     }
 
     public static ArrayListOrderDao getInstance() {
