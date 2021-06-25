@@ -3,25 +3,32 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 
-<jsp:useBean id="product" type="com.es.phoneshop.model.product.Product" scope="request"/>
+<jsp:useBean id="product" class="com.es.phoneshop.model.product.entity.Product" scope="request"/>
 <tags:master pageTitle="Product details">
-    <p>
-        Cart: ${cart}
-    </p>
-    <c:if test="${not empty param.message}">
+    <c:if test="${empty cart.items}">
         <div>
+            <h3>
+                Cart: ${cart}, total quantity: ${cart.totalQuantity}, total cost: ${cart.totalCost}
+            </h3>
+        </div>
+    </c:if>
+
+    <c:if test="${not empty param.message}">
+        <div class="success">
                 ${param.message}
         </div>
     </c:if>
-    <c:if test="${not empty error}">
-        <div>
+
+    <c:if test="${not empty param.error}">
+        <div class="error">
             There was an error adding to cart
         </div>
     </c:if>
+
     <p>
             ${product.description}
     </p>
-    <form method="post">
+    <form method="post" action="${pageContext.servletContext.contextPath}/add-product-to-cart/${product.id}">
         <table>
             <tr>
                 <td>Image</td>
@@ -32,13 +39,13 @@
             <tr>
                 <td>code</td>
                 <td>
-                    <img src="${product.code}">
+                        ${product.code}
                 </td>
             </tr>
             <tr>
                 <td>stock</td>
                 <td>
-                    <img src="${product.stock}">
+                        ${product.stock}
                 </td>
             </tr>
             <tr>
@@ -51,10 +58,13 @@
             <tr>
                 <td>quantity</td>
                 <td>
-                    <input name="quantity" value="${not empty param.quantity ? param.quantity : 1}">
-                    <c:if test="${not empty error}">
-                        <div>
-                                ${error}
+                    <input class="quantity" type="text" name="quantity"
+                           value="${not empty param.quantity ? param.quantity : 1}">
+                    <input type="hidden" name="redirect" value="PDP">
+                    <input type="hidden" name="productId" value="${product.id}">
+                    <c:if test="${not empty param.error}">
+                        <div class="error">
+                                ${param.error}
                         </div>
                     </c:if>
                 </td>
@@ -65,17 +75,7 @@
         </p>
     </form>
 
-    <c:if test="${not empty recentViews}">
-        <c:forEach var="view" items="${recentViews}">
-            <tr>
-                <td>
-                    <img class="product-tile"
-                         src="${view.imageUrl}">
-                </td>
-                <td>
-                    <a href="${pageContext.servletContext.contextPath}/products/${view.id}"
-                        ${view.description}</td>
-            </tr>
-        </c:forEach>
+    <c:if test="${not empty recentlyViewed}">
+        <tags:recentlyViewed recentlyViewed="${recentlyViewed}"/>
     </c:if>
 </tags:master>

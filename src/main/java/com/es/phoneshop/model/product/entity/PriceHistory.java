@@ -1,14 +1,15 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.model.product.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
-public class PriceHistory implements Comparable<PriceHistory> {
+public class PriceHistory implements Comparable<PriceHistory>, Serializable {
     private LocalDate dateTime;
     private BigDecimal price;
 
