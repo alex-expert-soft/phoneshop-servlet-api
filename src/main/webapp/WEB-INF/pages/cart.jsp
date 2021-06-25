@@ -5,17 +5,11 @@
 
 <jsp:useBean id="cart" class="com.es.phoneshop.model.cart.entity.Cart" scope="request"/>
 <tags:master pageTitle="Cart">
+    <p></p>
     <c:if test="${empty cart.items}">
         Cart is empty yet
     </c:if>
     <c:if test="${not empty cart.items}">
-        <div>
-            <h3>
-                Cart: ${cart}, total quantity: ${cart.totalQuantity}, total cost: ${cart.totalCost}
-            </h3>
-        </div>
-
-
         <c:if test="${not empty param.message}">
             <div class="success">
                     ${param.message}
