@@ -1,10 +1,12 @@
 package com.es.phoneshop.model.cart;
 
-import com.es.phoneshop.model.product.dao.ArrayListProductDao;
-import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.cart.entity.Cart;
+import com.es.phoneshop.model.cart.service.CartService;
+import com.es.phoneshop.model.cart.service.DefaultCartService;
+import com.es.phoneshop.model.product.dao.ArrayListProductDao;
+import com.es.phoneshop.model.product.dao.ProductDao;
 import com.es.phoneshop.model.product.entity.Product;
 import lombok.SneakyThrows;
 import org.junit.Before;
@@ -39,17 +41,6 @@ public class DefaultCartServiceTest {
                 .anyMatch(item -> item.getProduct().getId().equals(product.getId())));
     }
 
-    @SneakyThrows
-    @Test
-    public void addProductTestEx() {
-        final Currency usd = Currency.getInstance("USD");
-        final Product product = new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
-        product.setId(1L);
-        productDao.save(product);
-        final Cart cart = new Cart();
-        cartService.add(cart, (long) -1, 10);
-    }
-
     @Test
     public void addProductToCartNullCart() {
         assertThrows(NullPointerException.class,
@@ -65,7 +56,7 @@ public class DefaultCartServiceTest {
     @SneakyThrows
     @Test
     public void addProductToCartIncorrectQuantity() {
-        assertThrows(OutOfStockException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> cartService.add(new Cart(), 1L, 0));
     }
 
@@ -192,7 +183,7 @@ public class DefaultCartServiceTest {
     @SneakyThrows
     @Test
     public void updateProductInCartIncorrectQuantity() {
-        assertThrows(OutOfStockException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> cartService.update(new Cart(), 1L, -1));
     }
 
