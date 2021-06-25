@@ -1,15 +1,15 @@
 package com.es.phoneshop.model.order.service;
 
-import com.es.phoneshop.exception.OrderNotFoundException;
 import com.es.phoneshop.model.cart.entity.Cart;
 import com.es.phoneshop.model.cart.entity.CartItem;
-import com.es.phoneshop.model.order.entity.Order;
-import com.es.phoneshop.model.order.entity.PaymentMethod;
 import com.es.phoneshop.model.order.dao.ArrayListOrderDao;
 import com.es.phoneshop.model.order.dao.OrderDao;
+import com.es.phoneshop.model.order.entity.Order;
+import com.es.phoneshop.model.order.entity.PaymentMethod;
 import lombok.NonNull;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,11 +35,7 @@ public class DefaultOrderServiceImpl implements OrderService {
 
     @Override
     public Order getOrder(@NonNull final Long id) {
-        try {
-            return orderDao.getOrder(id);
-        } catch (OrderNotFoundException ex) {
-            throw new OrderNotFoundException("Order with id " + id + " not found");
-        }
+        return orderDao.getOrder(id);
     }
 
     @Override
@@ -61,7 +57,7 @@ public class DefaultOrderServiceImpl implements OrderService {
 
     @Override
     public List<PaymentMethod> getPaymentMethods() {
-        return List.of(PaymentMethod.values());
+        return Arrays.asList(PaymentMethod.values());
     }
 
     @Override
@@ -72,11 +68,7 @@ public class DefaultOrderServiceImpl implements OrderService {
 
     @Override
     public Order getOrderBySecureId(@NonNull final String secureId) {
-        try {
-            return orderDao.getOrderBySecureId(secureId);
-        } catch (OrderNotFoundException ex) {
-            throw new OrderNotFoundException("Order with secure id " + secureId + "not found");
-        }
+        return orderDao.getOrderBySecureId(secureId);
     }
 
     private BigDecimal calculateDeliveryCost() {
