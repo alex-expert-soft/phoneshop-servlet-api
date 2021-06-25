@@ -19,7 +19,7 @@ public class RequestParameter {
     public static final String PLP_PAGE = "/products";
     public static final String PDP_PAGE = "/products/";
     public static final String PAYMENT_METHODS = "paymentMethods";
-    public static final String PAYMENT_METHOD = "paymentMethod";
+    public static final String CURRENT_PAYMENT_METHOD = "paymentMethod";
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
     public static final String PHONE = "phone";
