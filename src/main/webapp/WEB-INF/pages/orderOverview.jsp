@@ -96,7 +96,7 @@
         <tr>
             <td>Payment method</td>
             <td>
-                    ${order.paymentMethod}
+                    ${order.paymentMethod.toString()}
             </td>
         </tr>
     </table>
