@@ -109,9 +109,9 @@
                                    errors="${errors}"/>
                 <tags:orderFormRow name="phone" label="Phone" order="${order}" placeholder="+375 (хх) ххх-хх-хх"
                                    errors="${errors}"/>
-                <tags:orderFormRow name="deliveryDate" label="Delivery date" placeholder="" order="${order}"
+                <tags:orderFormRow name="deliveryDate" label="Delivery date" placeholder="2021-20-07" order="${order}"
                                    errors="${errors}"/>
-                <tags:orderFormRow name="deliveryAddress" label="Delivery address" placeholder="2021-20-07"
+                <tags:orderFormRow name="deliveryAddress" label="Delivery address" placeholder=""
                                    order="${order}" errors="${errors}"/>
                 <tr>
                     <td>Payment method</td>
