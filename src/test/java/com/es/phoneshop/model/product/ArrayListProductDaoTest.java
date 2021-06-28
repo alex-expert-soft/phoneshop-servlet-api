@@ -1,11 +1,9 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.product.dao.ArrayListProductDao;
 import com.es.phoneshop.model.product.dao.ProductDao;
-import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.product.entity.Product;
-import com.es.phoneshop.model.product.entity.SortField;
-import com.es.phoneshop.model.product.entity.SortOrder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,7 +27,7 @@ public class ArrayListProductDaoTest {
         Product product = new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
         productDao.save(product);
 
-        assertTrue(productDao.findProducts("", SortField.DESCRIPTION, SortOrder.ASC).contains(product));
+        assertTrue(productDao.findProducts("", "description", "asc").contains(product));
     }
 
     @Test
@@ -42,8 +40,8 @@ public class ArrayListProductDaoTest {
         Product updProduct = new Product(id, "siemens75", "Siemens SXG75", new BigDecimal(200), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
         productDao.save(updProduct);
 
-        assertFalse(productDao.findProducts("nokia", SortField.DESCRIPTION, SortOrder.ASC).contains(product));
-        assertTrue(productDao.findProducts("siemens", SortField.DESCRIPTION, SortOrder.ASC).contains(updProduct));
+        assertFalse(productDao.findProducts("nokia", "description", "asc").contains(product));
+        assertTrue(productDao.findProducts("siemens", "description", "asc").contains(updProduct));
     }
 
     @Test
@@ -66,7 +64,7 @@ public class ArrayListProductDaoTest {
 
         productDao.delete(id);
         assertThrows(ProductNotFoundException.class,
-                ()->productDao.getProduct(id));
+                () -> productDao.getProduct(id));
     }
 
     @Test
@@ -75,12 +73,12 @@ public class ArrayListProductDaoTest {
         Product product = new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
         productDao.save(product);
 
-        assertTrue(productDao.findProducts("siemens", SortField.DESCRIPTION, SortOrder.ASC).contains(product));
+        assertTrue(productDao.findProducts("siemens", "description", "asc").contains(product));
     }
 
     @Test
     public void testFindProductsNoResultsWithThisSearchQuery() {
-        assertTrue(productDao.findProducts("nokia", SortField.DESCRIPTION, SortOrder.ASC).isEmpty());
+        assertTrue(productDao.findProducts("nokia", "description", "asc").isEmpty());
     }
 
     @Test
@@ -91,6 +89,29 @@ public class ArrayListProductDaoTest {
         final long id = product.getId();
 
         assertEquals(productDao.getProduct(id), product);
-        assertFalse(productDao.findProducts("siemens", SortField.DESCRIPTION, SortOrder.ASC).contains(product));
+        assertFalse(productDao.findProducts("siemens", "description", "asc").contains(product));
+    }
+
+    @Test
+    public void testChangePriceSuccess() {
+        Currency usd = Currency.getInstance("USD");
+        final BigDecimal currentPrice = BigDecimal.valueOf(150);
+        final BigDecimal newPrice = BigDecimal.valueOf(200);
+        Product product = new Product("simsxg75", "Siemens SXG75", currentPrice, usd, 0, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
+        productDao.save(product);
+        final long id = product.getId();
+
+        productDao.changePrice(id, newPrice);
+        assertEquals(newPrice, product.getPrice());
+    }
+
+    @Test
+    public void testChangePriceNullArguments() {
+        assertThrows(NullPointerException.class,
+                ()->productDao.changePrice(null,null));
+        assertThrows(NullPointerException.class,
+                ()->productDao.changePrice(1L,null));
+        assertThrows(NullPointerException.class,
+                ()->productDao.changePrice(null,new BigDecimal(10)));
     }
 }

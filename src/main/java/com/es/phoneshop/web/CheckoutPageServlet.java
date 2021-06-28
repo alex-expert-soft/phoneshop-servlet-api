@@ -14,8 +14,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -33,7 +34,7 @@ public class CheckoutPageServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute(RequestParameter.ORDER, orderService.getOrder(cartService.getCart(request.getSession())));
+        request.setAttribute(RequestParameter.ORDER, orderService.getOrder(cartService.getCart(request.getSession())));;
         request.setAttribute(RequestParameter.PAYMENT_METHODS, orderService.getPaymentMethods());
         request.getRequestDispatcher("/WEB-INF/pages/checkout.jsp").forward(request, response);
     }
@@ -57,11 +58,11 @@ public class CheckoutPageServlet extends HttpServlet {
             cartService.clearCart(cart);
             response.sendRedirect(request.getContextPath()
                     + "/order/overview/"
-                    + order.getId());
+                    + order.getSecureId());
         } else {
             request.setAttribute(RequestParameter.ERRORS, errors);
             request.setAttribute(RequestParameter.ORDER, orderService.getOrder(cartService.getCart(request.getSession())));
-            request.setAttribute(RequestParameter.PAYMENT_METHOD, orderService.getPaymentMethods());
+            request.setAttribute(RequestParameter.PAYMENT_METHODS, orderService.getPaymentMethods());
             request.getRequestDispatcher("/WEB-INF/pages/checkout.jsp").forward(request, response);
         }
     }
@@ -77,11 +78,11 @@ public class CheckoutPageServlet extends HttpServlet {
     }
 
     private void setRequiredPaymentMethod(HttpServletRequest request, Map<String, String> errors, Order order) {
-        String value = request.getParameter(RequestParameter.PAYMENT_METHOD);
+        String value = request.getParameter(RequestParameter.CURRENT_PAYMENT_METHOD);
         if (value == null || value.isEmpty()) {
-            errors.put(RequestParameter.PAYMENT_METHOD, "Value is required");
+            errors.put(RequestParameter.CURRENT_PAYMENT_METHOD, "Value is required");
         } else {
-            order.setPaymentMethod(PaymentMethod.valueOf(value));
+            order.setPaymentMethod(PaymentMethod.fromString(value));
         }
     }
 
@@ -102,18 +103,15 @@ public class CheckoutPageServlet extends HttpServlet {
         if (dateString == null || dateString.isEmpty()) {
             errors.put(RequestParameter.DELIVERY_DATE, "Value is required");
         } else {
-            String[] dateArray = dateString.split("-");
             try {
-                int year = Integer.parseInt(dateArray[0]);
-                int month = Integer.parseInt(dateArray[1]);
-                int day = Integer.parseInt(dateArray[2]);
-                LocalDate date = LocalDate.of(year, month, day);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate date = LocalDate.parse(dateString, formatter);
                 if (date.compareTo(LocalDate.now()) >= 0) {
                     order.setDeliveryDate(date);
                 } else {
                     errors.put(RequestParameter.DELIVERY_DATE, "Date must be greater than today");
                 }
-            } catch (NumberFormatException | ArrayIndexOutOfBoundsException | DateTimeException e) {
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException | DateTimeParseException e) {
                 errors.put(RequestParameter.DELIVERY_DATE, "Incorrect date");
             }
         }

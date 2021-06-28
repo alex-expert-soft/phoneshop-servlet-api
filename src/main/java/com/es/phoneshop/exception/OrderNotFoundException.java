@@ -5,11 +5,11 @@ public class OrderNotFoundException extends RuntimeException {
     private String secureId;
 
     public OrderNotFoundException(Long id) {
-        this.id = id;
+        super("Order not found " + id);
     }
 
     public OrderNotFoundException(String secureId) {
-        this.secureId = secureId;
+        super("Order not found " + secureId);
     }
 
     public Long getId() {

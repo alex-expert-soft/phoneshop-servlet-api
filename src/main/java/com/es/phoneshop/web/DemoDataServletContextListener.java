@@ -23,7 +23,9 @@ public class DemoDataServletContextListener implements ServletContextListener {
         boolean insertDemoData = Boolean.valueOf(event.getServletContext().getInitParameter("insertDemoData"));
         if (insertDemoData) {
             getSampleProducts().forEach(product -> productDao.save(product));
+            changePrice();
         }
+
     }
 
     @Override
@@ -49,5 +51,15 @@ public class DemoDataServletContextListener implements ServletContextListener {
         result.add(new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
 
         return result;
+    }
+
+    private void changePrice() {
+        productDao.changePrice(0L, new BigDecimal(120));
+        productDao.changePrice(0L, new BigDecimal(125));
+        productDao.changePrice(1L, new BigDecimal(210));
+        productDao.changePrice(2L, new BigDecimal(315));
+        productDao.changePrice(3L, new BigDecimal(208));
+        productDao.changePrice(4L, new BigDecimal(1100));
+        productDao.changePrice(5L, new BigDecimal(345));
     }
 }
