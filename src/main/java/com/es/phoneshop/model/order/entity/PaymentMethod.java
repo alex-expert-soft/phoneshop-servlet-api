@@ -1,7 +1,7 @@
 package com.es.phoneshop.model.order.entity;
 
 public enum PaymentMethod {
-    CACHE("Cache"), CREDIT_CARD("Credit cart");
+    CASH("Cash"), CREDIT_CARD("Credit cart");
 
     private final String paymentMethod;
 
