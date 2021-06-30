@@ -2,6 +2,7 @@ package com.es.phoneshop.model.product.dao;
 
 import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.product.entity.Product;
+import com.es.phoneshop.model.product.entity.SearchType;
 import com.es.phoneshop.model.product.entity.SortField;
 import com.es.phoneshop.model.product.entity.SortOrder;
 import lombok.NonNull;
@@ -46,6 +47,14 @@ public class ArrayListProductDao implements ProductDao {
         return wordsList.stream()
                 .filter(description::contains)
                 .count();
+    }
+
+    private boolean search(String description, String searchType, Product product) {
+        if (SearchType.All_WORDS.equals(SearchType.fromString(searchType))) {
+            return countWordsAmount(description, product) >= product.getDescription().length();
+        } else {
+            return countWordsAmount(description, product) > 0;
+        }
     }
 
     private Comparator<Product> getComparator(String searchQuery, String sortField, String sortOrder) {
@@ -94,6 +103,35 @@ public class ArrayListProductDao implements ProductDao {
                     .collect(Collectors.toList());
         } finally {
             readLock.unlock();
+        }
+    }
+
+    @Override
+    public List<Product> searchProducts(final String description, final String searchType, final BigDecimal minPrice, final BigDecimal maxPrice) {
+        Lock readLock = rwLock.readLock();
+        readLock.lock();
+        try {
+            return products.stream()
+                    .filter(this::nonNullPrice)
+                    .filter(this::productIsInStock)
+                    .filter(product -> StringUtils.isBlank(description) || search(description, searchType, product))
+                    .filter(product -> filterPrice(product, minPrice, maxPrice))
+                    .collect(Collectors.toList());
+        } finally {
+            readLock.unlock();
+        }
+
+    }
+
+    private boolean filterPrice(Product product, BigDecimal minPrice, BigDecimal maxPrice) {
+        if (minPrice != null && maxPrice != null) {
+            return product.getPrice().intValue() >= minPrice.intValue() && product.getPrice().intValue() <= maxPrice.intValue();
+        } else if (minPrice != null && maxPrice == null) {
+            return product.getPrice().intValue() >= minPrice.intValue();
+        } else if (minPrice == null && maxPrice != null) {
+            return product.getPrice().intValue() <= maxPrice.intValue();
+        } else {
+            return true;
         }
     }
 
