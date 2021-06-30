@@ -25,4 +25,12 @@ public class RequestParameter {
     public static final String PHONE = "phone";
     public static final String DELIVERY_ADDRESS = "deliveryAddress";
     public static final String DELIVERY_DATE = "deliveryDate";
+
+    public static final String DESCRIPTION = "description";
+    public static final String MIN_PRICE = "minPrice";
+    public static final String MAX_PRICE = "maxPrice";
+    public static final String SEARCH_TYPES = "searchTypes";
+    public static final String CURRENT_SEARCH_TYPE = "searchType";
+    public static final String ERROR_MIN_PRICE = "errorMinPrice";
+    public static final String ERROR_MAX_PRICE = "errorMaxPrice";
 }

@@ -111,6 +111,16 @@
     </servlet>
 
     <servlet-mapping>
+        <servlet-name>search</servlet-name>
+        <url-pattern>/search</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>search</servlet-name>
+        <servlet-class>com.es.phoneshop.web.SearchPageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
         <servlet-name>orderOverview</servlet-name>
         <url-pattern>/order/overview/*</url-pattern>
     </servlet-mapping>

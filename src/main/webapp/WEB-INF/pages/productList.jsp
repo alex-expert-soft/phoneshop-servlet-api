@@ -8,6 +8,9 @@
     <p>
         Welcome to Expert-Soft training!
     </p>
+    <p>
+        <a href="${pageContext.servletContext.contextPath}/search">Advanced search</a>
+    </p>
     <c:if test="${not empty param.message}">
         <div class="success">
                 ${param.message}
